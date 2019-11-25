@@ -5,7 +5,7 @@ const app = express();
 app.use(bodyParser.json());
 app.use('/eduinblocks', require('./src/routes'));
 
-app.listen(4000);
+app.listen(2020);
 
 // get all accounts
 // web3.eth.getAccounts().then((resources) => { account = resources[0]; console.log(resources)});

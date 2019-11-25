@@ -1,10 +1,13 @@
 const express = require('express');
 const routes = express.Router();
+const InputDataDecoder = require('ethereum-input-data-decoder');
+
+require('dotenv/config');
 
 var Web3 = require('web3');
 var web3 = new Web3('ws://localhost:8545');
 
-var CoursesContract = new web3.eth.Contract([
+const ABI = [
 	{
 		"constant": false,
 		"inputs": [
@@ -14,7 +17,7 @@ var CoursesContract = new web3.eth.Contract([
 			},
 			{
 				"name": "_age",
-				"type": "uint256"
+				"type": "string"
 			}
 		],
 		"name": "setInstructor",
@@ -34,24 +37,27 @@ var CoursesContract = new web3.eth.Contract([
 			},
 			{
 				"name": "",
-				"type": "uint256"
+				"type": "string"
 			}
 		],
 		"payable": false,
 		"type": "function",
 		"stateMutability": "view"
 	}
-], '0xbBF289D846208c16EDc8474705C748aff07732dB');
+]
+const decoder = new InputDataDecoder(ABI);
+var CoursesContract = new web3.eth.Contract(ABI, process.env.ADDRESS);
 
 routes.get('/get-accounts', (req, res) => {
     web3.eth.getAccounts().then((resources) => { account = resources[0]; console.log(resources); res.send(resources)});
 });
 
 routes.get('/get-instructor', (req, res) => {
-    CoursesContract.methods.getInstructor().call().then((err, result) => {
-        if (err) res.send(err);
-        else res.send(result);
-    });
+    // res.sendStatus(200);
+    // CoursesContract.methods.getInstructor().call().then((err, result) => {
+    //     if (err) res.send(err);
+    //     else res.send(result);
+    // });
 });
 
 routes.get('/get-block/:blockHash', (req, res) => {
@@ -62,9 +68,18 @@ routes.get('/get-block/:blockHash', (req, res) => {
 });
 
 routes.post('/set-instructor', (req, res) => {
-    CoursesContract.methods.setInstructor(req.body.name, req.body.age).send({ from: '0x9d50beF2600F350707b40d95662b3fDf39Cb5396' })
+    CoursesContract.methods.setInstructor(req.body.name, req.body.age).send({ from: '0xCDB99309567ad0AbF3415d00d8cb6F34C1c01568' })
     .then(receipt => {
         res.send(receipt);
+    });
+});
+
+routes.get('/get-transaction/:transactionHash', (req, res) => {
+    const transactionHash = req.params.transactionHash;
+    web3.eth.getTransaction(transactionHash, (err, result) => {
+		const info = decoder.decodeData(result.input);
+		console.log(info.inputs);
+        res.send(info);
     });
 });
 

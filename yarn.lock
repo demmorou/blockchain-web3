@@ -928,6 +928,11 @@ dot-prop@^4.1.0:
   dependencies:
     is-obj "^1.0.0"
 
+dotenv@8.1.0:
+  version "8.1.0"
+  resolved "http://r.cnpmjs.org/dotenv/download/dotenv-8.1.0.tgz#d811e178652bfb8a1e593c6dd704ec7e90d85ea2"
+  integrity sha1-2BHheGUr+4oeWTxt1wTsfpDYXqI=
+
 drbg.js@^1.0.1:
   version "1.0.1"
   resolved "http://r.cnpmjs.org/drbg.js/download/drbg.js-1.0.1.tgz#3e36b6c42b37043823cdbc332d58f31e2445480b"
