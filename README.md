@@ -1,4 +1,4 @@
-# Blockchain com Smart Contracts Ethereum
+# Blockchain com Smart Contracts Ethereum, Node.js e [Web3](https://web3js.readthedocs.io/en/v1.2.4/index.html)
 
 Esta é uma implementação de uma API para se comunicar com os Smart Contracts do Ethereum utilizando Node.js que salva nome e idade de uma pessoa e os recupera posteriormente.
 
