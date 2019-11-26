@@ -4,8 +4,8 @@ const InputDataDecoder = require('ethereum-input-data-decoder');
 
 require('dotenv/config');
 
-var Web3 = require('web3');
-var web3 = new Web3('ws://localhost:8545');
+const Web3 = require('web3');
+const web3 = new Web3(process.env.ADDRESS_NETWORK);
 
 const ABI = [
 	{
@@ -45,19 +45,12 @@ const ABI = [
 		"stateMutability": "view"
 	}
 ]
+
 const decoder = new InputDataDecoder(ABI);
-var CoursesContract = new web3.eth.Contract(ABI, process.env.ADDRESS);
+const CoursesContract = new web3.eth.Contract(ABI, process.env.ADDRESS);
 
 routes.get('/get-accounts', (req, res) => {
     web3.eth.getAccounts().then((resources) => { account = resources[0]; console.log(resources); res.send(resources)});
-});
-
-routes.get('/get-instructor', (req, res) => {
-    // res.sendStatus(200);
-    // CoursesContract.methods.getInstructor().call().then((err, result) => {
-    //     if (err) res.send(err);
-    //     else res.send(result);
-    // });
 });
 
 routes.get('/get-block/:blockHash', (req, res) => {
@@ -68,7 +61,7 @@ routes.get('/get-block/:blockHash', (req, res) => {
 });
 
 routes.post('/set-instructor', (req, res) => {
-    CoursesContract.methods.setInstructor(req.body.name, req.body.age).send({ from: '0xCDB99309567ad0AbF3415d00d8cb6F34C1c01568' })
+    CoursesContract.methods.setInstructor(req.body.name, req.body.age).send({ from: process.env.ACCOUNT })
     .then(receipt => {
         res.send(receipt);
     });
@@ -77,9 +70,14 @@ routes.post('/set-instructor', (req, res) => {
 routes.get('/get-transaction/:transactionHash', (req, res) => {
     const transactionHash = req.params.transactionHash;
     web3.eth.getTransaction(transactionHash, (err, result) => {
-		const info = decoder.decodeData(result.input);
-		console.log(info.inputs);
-        res.send(info);
+		if(err){
+			console.log('Error in: ', err);
+			res.send({ erro: true })
+		}else{
+			const info = decoder.decodeData(result.input);
+			console.log(info.inputs);
+			res.send(info);
+		}
     });
 });
 
